@@ -413,4 +413,3 @@ rutx_output_S96
 rutx_output_S97
 rutx_output_S98
 rutx_output_S99
-2017-05-21 21:22:22          0 

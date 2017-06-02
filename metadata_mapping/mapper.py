@@ -22,13 +22,14 @@ afh.close()
 
 output_dict = {}
 for elem in meta_arr:
-    for sample in assem_arr:
-        if elem in sample:
+    for sample2 in assem_arr:
+        sample = sample2.split('_')[2]
+        if elem == sample:
             if output_dict.has_key(elem):
-                output_dict[elem].append(sample)
+                output_dict[elem].append(sample2)
             else:
                 output_dict[elem] = []
-                output_dict[elem].append(sample)
+                output_dict[elem].append(sample2)
 
 ofh = open(output_file,'w')
 for key in output_dict.keys():
