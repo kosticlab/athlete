@@ -1,0 +1,3 @@
+#!/bin/bash
+
+grep ${1} relative_abundances.csv >> l_abundances.csv

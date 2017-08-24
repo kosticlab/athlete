@@ -10,7 +10,9 @@ for elem in f:
     arr.append(elem.rstrip().split(','))
 
 arrt = map(list, zip(*arr))
+
 for elem in arrt:
+    print elem[0]
     o.write(','.join(elem)+'\n')
 
 
