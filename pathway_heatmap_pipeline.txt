@@ -1,0 +1,9 @@
+@2ways to run
+
+prokkatsv_to_ec_gene_list.sh [prokka tsv for all samples]
+subset_ramatrix_by_ecgenes.py
+metadata_merger.R
+
+subset_gcat_by_pathway.py
+subset_ramatrix_by_genes.py
+metadata_merger.R
