@@ -1,0 +1,31 @@
+library(dada2)
+run_pipeline <- function(){
+path <- "/mnt/hdrive/batch_2016-05-12/raw"
+fnFs <- sort(list.files(path, pattern=".R1.fastq.bz2", full.names = TRUE))
+fnRs <- sort(list.files(path, pattern=".R2.fastq.bz2", full.names = TRUE))
+sample.names <- sapply(strsplit(basename(fnFs), "[.]"), `[`, 1)
+filt_path <- file.path(path, "filtered") # Place filtered files in filtered/ subdirectory
+filtFs <- file.path(filt_path, paste0(sample.names, "_F_filt.fastq.gz"))
+filtRs <- file.path(filt_path, paste0(sample.names, "_R_filt.fastq.gz"))
+out <- filterAndTrim(fnFs,filtFs,fnRs,filtRs,truncLen=c(150,150),maxN=0,maxEE=c(2,2),truncQ=2,rm.phix=TRUE,compress=TRUE,multithread=TRUE)
+head(out)
+errF <- learnErrors(filtFs,multithread=TRUE)
+errR <- learnErrors(filtRs,multithread=TRUE)
+derepFs <- derepFastq(filtFs, verbose=TRUE)
+derepRs <- derepFastq(filtRs, verbose=TRUE)
+dadaFs <- dada(derepFs, err=errF, multithread=TRUE)
+dadaRs <- dada(derepRs, err=errR, multithread=TRUE)
+mergers <- mergePairs(dadaFs, derepFs, dadaRs, derepRs, verbose=TRUE, JustConcatenate=TRUE)
+seqtab <- makeSequenceTable(mergers)
+table(nchar(getSequences(seqtab)))
+seqtab.nochim <- removeBimeraDenovo(seqtab, method="consensus", multithread=TRUE, verbose=TRUE)
+sum(seqtab.nochim)/sum(seqtab)
+getN <- function(x) sum(getUniques(x))
+track <- cbind(out, sapply(dadaFs, getN), sapply(mergers, getN), rowSums(seqtab), rowSums(seqtab.nochim))
+colnames(track) <- c("input", "filtered", "denoised", "merged", "tabled", "nonchim")
+rownames(track) <- sample.names
+head(track)
+taxa <- assignTaxonomy(seqtab.nochim, "/mnt/hdrive/silva_nr_v128_train_set.fa.gz", multithread=TRUE)
+taxa <- addSpecies(taxa, "/mnt/hdrive/silva_species_assignment_v128.fa.gz")
+}
+run_pipeline()
