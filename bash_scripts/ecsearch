@@ -1,0 +1,2 @@
+#!/bin/bash
+for x in $(grep "$1\t" ~/Desktop/manual_reactions/newecs_lactate | cut -d$'\t' -f1);do grep "${x}," $2;done

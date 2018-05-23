@@ -1,0 +1,7 @@
+#!/bin/bash
+cat ${1} | cut -d, -f2 > ${1}.1t
+Rscript fdr.R ${1}.1t ${1}.temp
+paste -d , <(cat ${1} | cut -d, -f1) <(cat ${1}.temp | tail -n +1 | cut -d' ' -f2) > ${1}.adjusted
+rm ${1}.temp
+rm ${1}.1t
+

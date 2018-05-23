@@ -1,0 +1,14 @@
+#!/bin/bash
+#1 is anova output file,2 is p-value cutoff
+python run_one_sided_anova_comparison.py /Users/jacobluber/Dropbox\ \(HMS\)/Projects/Athlete/UltraRower/metadata.txt ../ru2_lactate.csv ${1}
+./fdr ${1}
+python getsigs.py ${1} ${1}.adjusted.sig ${2}
+#ecs?
+./lactate_ec_search ${1}.adjusted.sig
+python distribution_generate.py /Users/jacobluber/Dropbox\ \(HMS\)/Projects/Athlete/UltraRower/metadata.txt ../ru2_lactate.csv ${1}.adjusted.sig ${1}.plotting
+cat ${1}.plotting | sed 's/,0,/,1.00E-8,/g' > ${1}.log.plotting
+Rscript plot_dists.R ${1}.log.plotting
+cd pathway_results
+for x in $(ls | grep -v "csv");do python ../distribution_generate.py /Users/jacobluber/Dropbox\ \(HMS\)/Projects/Athlete/UltraRower/metadata.txt ../../ru2_lactate.csv ${x} ${x}.plotting;cat ${x}.plotting | sed 's/,0,/,1.00E-8,/g' > ${x}.log.plotting;done
+for x in $(ls *log.plotting);do Rscript ../plot_dists.R ${x};done
+#for x in *.jpg;do feh ${x};done

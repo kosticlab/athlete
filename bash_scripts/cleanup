@@ -1,0 +1,7 @@
+#!/bin/bash
+rm -rf pathway_results
+rm *.csv
+rm *.adjusted
+rm *.sig
+rm *.plotting
+rm *.jpg
